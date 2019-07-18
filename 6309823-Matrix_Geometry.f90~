@@ -1,0 +1,181 @@
+!--------------------------------------------------
+!PHY1038 Assignment 3 - Matrix Geometry 
+!URN 6309823 - Penguin Lab Group 1
+!May 5th 2015
+!--------------------------------------------------
+
+PROGRAM Matrix_Geometry
+  IMPLICIT NONE
+
+    REAL :: theta,j,k,l,h,m,n,xcom,ycom,alpha
+    REAL, DIMENSION(1:3) :: a,b,c,e,i,p,newa,newb,newc
+      
+
+      !Step 1
+
+      OPEN(unit=20,file='rotate.dat')
+      
+      WRITE(6,*) "The x value of the initial point to be rotated is:"
+      READ(5,*) m
+
+      WRITE(6,*) "The y value of the initial point to be rotated is:"
+      READ(5,*) n
+
+      !p=initial point to be rotated
+      p=(/m,n,0.0/)
+
+      WRITE(6,*) "Please input a value for the angle of rotation theta in radians:"
+      READ(5,*) theta
+      WRITE(6,*) " "
+      WRITE(6,*) " "
+  
+      !a = [ 1 1 1 ]
+      !b = [ 2 1 1 ]
+      !c = [ 2 2 1 ]
+
+      a=(/1.0,1.0,1.0/)
+      b=(/2.0,1.0,1.0/)
+      c=(/2.0,2.0,1.0/)
+      e=(/1.0,1.0,1.0/)
+
+      WRITE(6,*) "The angle through which the vectors are rotated is theta."
+      WRITE(6,*) " "
+      WRITE(6,*) "theta=", theta, "radians"
+      WRITE(6,*) " "
+
+      !This inputs the translated points and the original points to the file rotate.dat
+      WRITE(20,*) f(a,theta), a, f(p,theta), p
+      WRITE(20,*) f(b,theta), b
+      WRITE(20,*) f(c,theta), c
+      WRITE(20,*) f(e,theta), e
+
+      WRITE(6,*) "Plot using GNU PLOT."
+
+      !Write in Terminal 'gnuplot' then press ENTER"
+
+      !In order to plot the vector inputed by the user, write in the terminal:
+      !plot "rotate.dat" using 7:8, "rotate.dat" using 10:11
+      !then press ENTER
+
+      !In order to plot the triangle as a test, write in the terminal:
+      !plot "rotate.dat" using 1:2 with lines, "rotate.dat" using 4:5 with lines 
+      !then press ENTER
+      
+
+      !Step 2
+
+      OPEN(unit=19,file='translate.dat')
+
+      WRITE(6,*) "Please input the x value of the initial point to be translated:"
+      READ(5,*) l
+      WRITE(6,*) " "
+      WRITE(6,*) "Please input the y value of the initial point to be translated:"
+      READ(5,*) h
+      WRITE(6,*) " "
+
+      !i=initial point to be translated
+      i=(/l,h,1.0/)
+  
+      WRITE(6,*) " "
+      WRITE(6,*) "The shape is translated in the x axis by:"
+      READ(5,*) j
+      WRITE(6,*) " "
+      WRITE(6,*) "The shape is translated in the y axis by:"
+      READ(5,*) k
+      WRITE(6,*) " "
+      WRITE(6,*) " "
+
+      !This inputs the translated points and the original points to the file translate.dat
+      WRITE(19,*) g(a,k,j), a, i, g(i,k,j)
+      WRITE(19,*) g(b,k,j), b
+      WRITE(19,*) g(c,k,j), c
+      WRITE(19,*) g(e,k,j), e
+      
+      WRITE(6,*) "Plot using GNU PLOT."
+      
+      !Write in Terminal 'gnuplot' then press ENTER"
+
+      !In order to plot the vector inputed by the user, write in the terminal:
+      !plot "translate.dat" using 7:8, "translate.dat" using 10:11
+      !then press ENTER
+
+      !In order to plot the triangle as a test, write in the terminal:
+      !plot "translate.dat" using 1:2 with lines, "translate.dat" using 4:5 with lines 
+      !then press ENTER
+
+
+      !Step 3
+      
+      OPEN(unit=18,file='step3.dat')
+ 
+      !The current centre of mass of the triangle is: (",xcom,",",ycom,")"
+      xcom=(a(1)+b(1)+c(1))/3
+      ycom=(a(2)+b(2)+c(2))/3
+
+      WRITE(6,*) "Please input a value for the angle of rotation 'alpha' in radians:"
+      READ(5,*) alpha
+      WRITE(6,*) " "
+      WRITE(6,*) " "
+
+      newa=o(a,xcom,ycom,alpha)
+      newb=o(b,xcom,ycom,alpha)
+      newc=o(c,xcom,ycom,alpha)
+
+      !This inputs the points rotated about the triangle's centre of mass and the original points to the file step3.dat
+      WRITE(18,*) a,newa
+      WRITE(18,*) b,newb
+      WRITE(18,*) c,newc
+      WRITE(18,*) a,newa
+
+      WRITE(6,*) "The triangle has now been rotated about its centre of mass."
+      WRITE(6,*) " "      
+      WRITE(6,*) " "
+      WRITE(6,*) "Write 'gnuplot 6309823.gnu' in the terminal to create a .png file displaying the original triangle and the rotate triangle."
+
+      
+    CONTAINS
+
+      !Rotation Function
+      FUNCTION f(a,theta)
+        IMPLICIT NONE
+          REAL, INTENT(IN) :: theta
+          REAL, DIMENSION(1:3) :: a,f
+          REAL, DIMENSION(1:3,1:3) :: d
+
+          !d = [cos(theta) -sin(theta) 0]
+          !    [sin(theta)  cos(theta  0]
+          !    [    0           0      1]
+
+          d= RESHAPE( (/cos(theta),sin(theta),0.0,-sin(theta),cos(theta),0.0,0.0,0.0,1.0/), (/3,3/) )
+          f=matmul(a,d)
+      END FUNCTION f
+      
+
+      !Translation Function
+      FUNCTION g(i,j,k)
+        IMPLICIT NONE
+          REAL, INTENT(IN) :: k,j
+          REAL, DIMENSION(1:3) :: g,i
+          REAL, DIMENSION(1:3,1:3) :: h
+
+          !h = [ 1 0 j ]
+          !    [ 0 1 k ]
+          !    [ 0 0 1 ]
+
+          h= RESHAPE( (/1.0,0.0,j,0.0,1.0,k,0.0,0.0,1.0/), (/3,3/) )
+          g=MATMUL(i,h)
+      END FUNCTION g
+
+
+      !Function which rotates a triangle about its centre of mass
+      FUNCTION o(a,xcom,ycom,alpha)
+        IMPLICIT NONE
+          REAL, INTENT(IN) :: xcom,ycom,alpha,a(3)
+          REAL, DIMENSION(1:3) :: z,y,o
+
+          z=g(a,-xcom,-ycom)
+          y=f(z,alpha)
+          o=g(y,xcom,ycom)
+      END FUNCTION o
+
+END PROGRAM Matrix_Geometry

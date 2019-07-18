@@ -1,0 +1,69 @@
+!-----------------------------------------------------
+!PHY1038 Assignment 1 - Newton-Raphson root finding
+!URN 6309823 - Penguin Lab Group 1K
+!February 24th 2015
+!-----------------------------------------------------
+
+PROGRAM Newton_Raphson
+IMPLICIT NONE
+REAL :: x,x1,a,b,c,d,t
+INTEGER :: j,k
+
+WRITE(6,*) " "
+WRITE(6,*) " "
+WRITE(6,*) "This program finds the roots of a cubic function using the Newton-Raphson method,"
+WRITE(6,*) " "
+WRITE(6,*) "i.e. it finds all possible values of x which satisfy the equation: f(x)=ax^3+bx^2+cx+d=0."
+WRITE(6,*) " "
+WRITE(6,*) " "
+
+!I had to change this so that the coeficients are defined individually. Then I an input them into the cubic equation.
+
+WRITE(6,*) "Please input a value for a."
+READ(5,*) a
+WRITE(6,*) " "
+WRITE(6,*) "Please input a value for b."
+READ(5,*) b
+WRITE(6,*) " "
+WRITE(6,*) "Please input a value for c."
+READ(5,*) c
+WRITE(6,*) " "
+WRITE(6,*) "Please input a value for d."
+READ(5,*) d
+WRITE(6,*) " "
+WRITE(6,*) " "
+WRITE(6,*) "Make a guess as a first approximation to the root of the function (x); write down this value."
+READ(5,*) x1
+WRITE(6,*) " "
+WRITE(6,*) " "
+
+!'t' remains as the initial guess so that it can be referenced later
+
+t=x1
+x=x1
+
+!This is a do loop which uses the formulat x1=x0-f(x0)/f'(x0) to find an estimate of a root of the cubic equation
+
+!-----------------------------------------------------
+
+k=1
+
+DO j=1,100
+  x1=x-(a*x**3+b*x**2+c*x+d)/(3*a*x**2+2*b*x+c)
+    IF (ABS(x1-x) <1E-6) EXIT 
+  x=x1
+  k=k+1
+END DO
+
+!------------------------------------------------------
+WRITE(6,*) "The cubic equation in question is:",a,"x^3+",b,"x^2+",c,"x+",d
+WRITE(6,*) " "
+WRITE(6,*) "This is a root of the cubic equation to a tolerance of 10^-6:", x1
+WRITE(6,*) " "
+WRITE(6,*) "It took",k,"iterations to find this root"
+WRITE(6,*) " "
+WRITE(6,*) "The initial guess for a root of the cubic equation was:",t
+WRITE(6,*) " "
+WRITE(6,*) "Please repeat this program with different values for the initial guess until three roots of the cubic equation are found"
+
+END PROGRAM Newton_Raphson

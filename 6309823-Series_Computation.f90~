@@ -1,0 +1,70 @@
+!--------------------------------------------------
+!PHY1038 Assignment 2 - Series Computation
+!URN 6309823 - Penguin Lab Group 1K
+!March 10th 2015
+!--------------------------------------------------
+
+
+!A Taylor approximation will be produced which will look close to the actual function for the range of x values suggested
+!However there will be some noticeable deviations and the ends of the range.
+!This program, will output to a file called "taylor.dat".
+
+!Compile this program using the command gfortran
+
+PROGRAM Series_Computation
+
+IMPLICIT NONE
+REAL :: a,x,e,dx,pi,factorial
+INTEGER :: n,i,j,num
+
+OPEN(unit=20,file='taylor.dat')
+
+WRITE(6,*) "This program will calculate the Taylor Series expansion of the function f(x)=sin(x)*exp(-x/2)."
+WRITE(6,*) " "
+WRITE(6,*) "This describes an oscillation whose amplitude is exponentially decaying"
+WRITE(6,*) " "
+WRITE(6,*) " "
+WRITE(6,*) "Specify the order (n) of the Taylor approximation"
+!A reasonable value is 15
+READ(5,*) n
+WRITE(6,*) " "
+WRITE(6,*) "Specify the number of x points"
+!A reasonable value is 1000
+READ(5,*) num
+WRITE(6,*) " "
+
+pi=acos(-1.0)
+
+dx=4.0*pi/num    
+
+!Where dx is the step value
+
+DO j=0,num
+  e=0.0
+  x=-2.0*pi+dx*j+1e-6
+  a=sin(x)*exp(-x/2)
+  factorial=1
+  DO i=1,n
+
+    !This DO loop calculates the taylor series values
+
+    factorial=factorial*i
+    e=((((-sqrt(5.0)/2.0)**i)*(sin(-i*atan(2.0))))/factorial)*x**i+e
+   END DO   
+WRITE (20,*) x,a,e 
+
+!x is the values of the variable x
+!a is the value of produced by the original function
+!e is the value of each order of the taylor series
+
+END DO
+
+WRITE(6,*) "The data is writen to the file taylor.dat in the format:"
+WRITE(6,*) "x, f(x), Taylor Expansion"
+
+!Write in Terminal "gnuplot" then press ENTER
+!Write in Terminal "plot "taylor.dat" using 1:2 w l, "" using 1:3 w l" and press ENTER
+!Write in Terminal "set yrange [-12,12]" and press ENTER
+!Write in Terminal "replot" and press ENTER
+
+END PROGRAM Series_Computation
